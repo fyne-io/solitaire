@@ -2,7 +2,7 @@
 
 package faces
 
-import "fyne.io/fyne"
+import "fyne.io/fyne/v2"
 
 // ForCard returns the face resource for the specified card value and suit.
 func ForCard(card, suit int) fyne.Resource {

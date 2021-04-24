@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 
 	"github.com/fyne-io/solitaire/faces"
 )

@@ -1,16 +1,14 @@
 package main
 
 import (
-	"image/color"
-
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 
 	"github.com/fyne-io/solitaire/faces"
 )
 
-const minCardWidth = 95
-const minPadding = 4
+const minCardWidth = float32(95)
+const minPadding = float32(4)
 const cardRatio = 142.0 / minCardWidth
 
 var (
@@ -24,7 +22,7 @@ var (
 	minHeight = cardSize.Height*3 + bigPad + smallPad*2
 )
 
-func updateCardPosition(c *canvas.Image, x, y int) {
+func updateCardPosition(c *canvas.Image, x, y float32) {
 	c.Resize(cardSize)
 	c.Move(fyne.NewPos(x, y))
 }
@@ -80,7 +78,7 @@ type tableRender struct {
 	table   *Table
 }
 
-func updateSizes(pad int) {
+func updateSizes(pad float32) {
 	smallPad = pad
 	overlap = smallPad * 5
 	bigPad = smallPad + overlap
@@ -91,12 +89,12 @@ func (t *tableRender) MinSize() fyne.Size {
 }
 
 func (t *tableRender) Layout(size fyne.Size) {
-	padding := int(float32(size.Width) * .006)
+	padding := size.Width * .006
 	updateSizes(padding)
 
 	newWidth := (size.Width - smallPad*8) / 7.0
 	newWidth = fyne.Max(newWidth, minCardWidth)
-	cardSize = fyne.NewSize(newWidth, int(float32(newWidth)*cardRatio))
+	cardSize = fyne.NewSize(newWidth, newWidth*cardRatio)
 
 	updateCardPosition(t.deck, smallPad, smallPad)
 
@@ -127,10 +125,6 @@ func (t *tableRender) Layout(size fyne.Size) {
 
 func (t *tableRender) ApplyTheme() {
 	// no-op we are a custom UI
-}
-
-func (t *tableRender) BackgroundColor() color.Color {
-	return color.RGBA{R: 0x07, G: 0x63, B: 0x24, A: 0xff}
 }
 
 func (t *tableRender) refreshCard(img *canvas.Image, card *Card) {

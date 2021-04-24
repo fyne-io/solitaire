@@ -2,8 +2,8 @@
 package main
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
 )
 
 // show creates a new game and loads a table rendered in a new window.
@@ -20,6 +20,7 @@ func show(app fyne.App) {
 func main() {
 	app := app.New()
 	app.SetIcon(resourceIconPng)
+	app.Settings().SetTheme(newGameTheme())
 
 	show(app)
 	app.Run()

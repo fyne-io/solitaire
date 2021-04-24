@@ -3,9 +3,10 @@ package main
 import (
 	"math"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/test"
+	"fyne.io/fyne/v2/widget"
 
 	"github.com/fyne-io/solitaire/faces"
 )
@@ -93,7 +94,7 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 
 // Tapped is called when the user taps the table widget
 func (t *Table) Tapped(event *fyne.PointEvent) {
-	render := widget.Renderer(t).(*tableRender)
+	render := test.WidgetRenderer(t).(*tableRender)
 	if withinCardBounds(render.deck, event.Position) {
 		t.selected = nil
 		t.game.DrawThree()
@@ -151,10 +152,6 @@ func (t *Table) Tapped(event *fyne.PointEvent) {
 
 	t.selected = nil // clicked elsewhere
 	t.Refresh()
-}
-
-// TappedSecondary is called when the user right-taps the table widget
-func (t *Table) TappedSecondary(event *fyne.PointEvent) {
 }
 
 // NewTable creates a new table widget for the specified game
