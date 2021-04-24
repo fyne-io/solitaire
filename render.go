@@ -85,7 +85,7 @@ func updateSizes(pad float32) {
 }
 
 func (t *tableRender) MinSize() fyne.Size {
-	return fyne.NewSize(minWidth, minHeight)
+	return fyne.NewSize(220, 140)
 }
 
 func (t *tableRender) Layout(size fyne.Size) {
@@ -93,7 +93,6 @@ func (t *tableRender) Layout(size fyne.Size) {
 	updateSizes(padding)
 
 	newWidth := (size.Width - smallPad*8) / 7.0
-	newWidth = fyne.Max(newWidth, minCardWidth)
 	cardSize = fyne.NewSize(newWidth, newWidth*cardRatio)
 
 	updateCardPosition(t.deck, smallPad, smallPad)

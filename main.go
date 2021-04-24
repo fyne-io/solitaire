@@ -13,6 +13,7 @@ func show(app fyne.App) {
 	w := app.NewWindow("Solitaire")
 	w.SetPadded(false)
 	w.SetContent(NewTable(game))
+	w.Resize(fyne.NewSize(minWidth, minHeight))
 
 	w.Show()
 }
