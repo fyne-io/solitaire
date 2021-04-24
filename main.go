@@ -19,10 +19,10 @@ func show(app fyne.App) {
 }
 
 func main() {
-	app := app.New()
-	app.SetIcon(resourceIconPng)
-	app.Settings().SetTheme(newGameTheme())
+	a := app.New()
+	a.SetIcon(resourceIconPng)
+	a.Settings().SetTheme(newGameTheme())
 
-	show(app)
-	app.Run()
+	show(a)
+	a.Run()
 }

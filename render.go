@@ -139,18 +139,16 @@ func (t *tableRender) refreshCardOrBlank(img *canvas.Image, card *Card) {
 		return
 	}
 
-	if card != nil {
-		if card.FaceUp {
-			img.Resource = card.Face()
-		} else {
-			img.Resource = faces.ForBack()
-		}
+	if card.FaceUp {
+		img.Resource = card.Face()
+	} else {
+		img.Resource = faces.ForBack()
+	}
 
-		if t.table.selected != nil && cardEquals(card, t.table.selected) {
-			img.Translucency = 0.25
-		} else {
-			img.Translucency = 0
-		}
+	if t.table.selected != nil && cardEquals(card, t.table.selected) {
+		img.Translucency = 0.25
+	} else {
+		img.Translucency = 0
 	}
 }
 
@@ -195,8 +193,7 @@ func (t *tableRender) appendStack(stack *stackRender) {
 	}
 }
 
-func (t *tableRender) positionForCard(card *Card) *canvas.Image {
-
+func (t *tableRender) positionForCard(_ *Card) *canvas.Image {
 	return nil
 }
 
@@ -243,7 +240,7 @@ type stackRender struct {
 	table *tableRender
 }
 
-func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
+func (s *stackRender) Layout(pos fyne.Position, _ fyne.Size) {
 	top := pos.Y
 	for i := range s.cards {
 		updateCardPosition(s.cards[i], pos.X, top)
