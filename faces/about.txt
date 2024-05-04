@@ -1,5 +1,5 @@
-English pattern playing cards by Dmitry Fomin.
-Downloaded from https://en.wikipedia.org/wiki/File:English_pattern_playing_cards_deck.svg .
+Vector Playing Cards by Byron Knoll,
+who kindly donated their work to the public domain.
 
-Licensed under Creative Commons CC0 1.0 Universal Public Domain Dedication.
-https://creativecommons.org/publicdomain/zero/1.0/deed.en
+http://byronknoll.blogspot.com/2011/03/vector-playing-cards.html
+
