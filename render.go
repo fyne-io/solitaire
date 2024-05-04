@@ -3,6 +3,8 @@ package main
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 
 	"github.com/fyne-io/solitaire/faces"
 )
@@ -18,8 +20,8 @@ var (
 	overlap  = smallPad * 5
 	bigPad   = smallPad + overlap
 
-	minWidth  = cardSize.Width*7 + smallPad*8
-	minHeight = cardSize.Height*3 + bigPad + smallPad*2
+	minWidth  = cardSize.Width*7 + smallPad*6
+	minHeight = cardSize.Height*3 + smallPad*2 + 1
 )
 
 func updateCardPosition(c *canvas.Image, x, y float32) {
@@ -68,6 +70,7 @@ type tableRender struct {
 	game *Game
 
 	deck *canvas.Image
+	sep  *widget.Separator
 
 	pile1, pile2, pile3            *canvas.Image
 	build1, build2, build3, build4 *canvas.Image
@@ -81,7 +84,6 @@ type tableRender struct {
 func updateSizes(pad float32) {
 	smallPad = pad
 	overlap = smallPad * 5
-	bigPad = smallPad + overlap
 }
 
 func (t *tableRender) MinSize() fyne.Size {
@@ -92,34 +94,39 @@ func (t *tableRender) Layout(size fyne.Size) {
 	padding := size.Width * .006
 	updateSizes(padding)
 
-	newWidth := (size.Width - smallPad*8) / 7.0
+	newWidth := (size.Width - smallPad*6) / 7.0
 	cardSize = fyne.NewSize(newWidth, newWidth*cardRatio)
 
-	updateCardPosition(t.deck, smallPad, smallPad)
+	updateCardPosition(t.deck, 0, 0)
 
-	updateCardPosition(t.pile1, smallPad*2+cardSize.Width, smallPad)
-	updateCardPosition(t.pile2, smallPad*2+cardSize.Width+overlap, smallPad)
-	updateCardPosition(t.pile3, smallPad*2+cardSize.Width+overlap*2, smallPad)
+	updateCardPosition(t.pile1, smallPad+cardSize.Width, 0)
+	updateCardPosition(t.pile2, smallPad+cardSize.Width+overlap, 0)
+	updateCardPosition(t.pile3, smallPad+cardSize.Width+overlap*2, 0)
 
-	updateCardPosition(t.build1, size.Width-(smallPad+cardSize.Width)*4, smallPad)
-	updateCardPosition(t.build2, size.Width-(smallPad+cardSize.Width)*3, smallPad)
-	updateCardPosition(t.build3, size.Width-(smallPad+cardSize.Width)*2, smallPad)
-	updateCardPosition(t.build4, size.Width-(smallPad+cardSize.Width), smallPad)
+	updateCardPosition(t.build1, size.Width-smallPad*3-cardSize.Width*4, 0)
+	updateCardPosition(t.build2, size.Width-smallPad*2-cardSize.Width*3, 0)
+	updateCardPosition(t.build3, size.Width-smallPad-cardSize.Width*2, 0)
+	updateCardPosition(t.build4, size.Width-cardSize.Width, 0)
 
-	t.stack1.Layout(fyne.NewPos(smallPad, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack2.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width), smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack3.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width)*2, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack4.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width)*3, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack5.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width)*4, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack6.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width)*5, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
-	t.stack7.Layout(fyne.NewPos(smallPad+(smallPad+cardSize.Width)*6, smallPad+bigPad+cardSize.Height),
-		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
+	sepThick := theme.SeparatorThicknessSize()
+	t.sep.Resize(fyne.NewSize(size.Width, sepThick))
+	t.sep.Move(fyne.NewPos(0, cardSize.Height+smallPad))
+
+	stackYPos := smallPad*2 + sepThick + cardSize.Height
+	t.stack1.Layout(fyne.NewPos(0, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack2.Layout(fyne.NewPos(smallPad+cardSize.Width, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack3.Layout(fyne.NewPos((smallPad+cardSize.Width)*2, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack4.Layout(fyne.NewPos((smallPad+cardSize.Width)*3, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack5.Layout(fyne.NewPos((smallPad+cardSize.Width)*4, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack6.Layout(fyne.NewPos((smallPad+cardSize.Width)*5, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
+	t.stack7.Layout(fyne.NewPos((smallPad+cardSize.Width)*6, stackYPos),
+		fyne.NewSize(cardSize.Width, size.Height-stackYPos))
 }
 
 func (t *tableRender) ApplyTheme() {
@@ -159,6 +166,7 @@ func (t *tableRender) Refresh() {
 		t.deck.Resource = faces.ForSpace()
 	}
 	canvas.Refresh(t.deck)
+	canvas.Refresh(t.sep)
 
 	t.refreshCard(t.pile1, t.game.Draw1)
 	t.refreshCard(t.pile2, t.game.Draw2)
@@ -202,6 +210,7 @@ func newTableRender(table *Table) *tableRender {
 	render.table = table
 	render.game = table.game
 	render.deck = newCardPos(nil)
+	render.sep = widget.NewSeparator()
 
 	render.pile1 = newCardPos(nil)
 	render.pile2 = newCardPos(nil)
@@ -220,7 +229,7 @@ func newTableRender(table *Table) *tableRender {
 	render.stack6 = newStackRender(render)
 	render.stack7 = newStackRender(render)
 
-	render.objects = []fyne.CanvasObject{render.deck, render.pile1, render.pile2, render.pile3,
+	render.objects = []fyne.CanvasObject{render.deck, render.sep, render.pile1, render.pile2, render.pile3,
 		render.build1, render.build2, render.build3, render.build4}
 
 	render.appendStack(render.stack1)
