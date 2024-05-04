@@ -1,3 +1,5 @@
+//go:generate fyne bundle --package=main -o data.go Icon.png
+
 // Package main launches the solitaire app
 package main
 
