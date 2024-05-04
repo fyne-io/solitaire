@@ -92,6 +92,12 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 	})
 }
 
+func (t *Table) Restart() {
+	t.game = NewGame()
+	test.WidgetRenderer(t).(*tableRender).game = t.game
+	t.Refresh()
+}
+
 // Tapped is called when the user taps the table widget
 func (t *Table) Tapped(event *fyne.PointEvent) {
 	render := test.WidgetRenderer(t).(*tableRender)
