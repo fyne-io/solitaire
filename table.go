@@ -18,7 +18,7 @@ type Table struct {
 	game     *Game
 	selected *Card
 
-	shuffle *widget.Button
+	shuffle *widget.ToolbarAction
 }
 
 // CreateRenderer gets the widget renderer for this table - internal use only
