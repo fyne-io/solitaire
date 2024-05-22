@@ -17,6 +17,8 @@ type Table struct {
 
 	game     *Game
 	selected *Card
+
+	shuffle *widget.Button
 }
 
 // CreateRenderer gets the widget renderer for this table - internal use only
@@ -94,6 +96,8 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 
 func (t *Table) Restart() {
 	t.game = NewGame()
+	t.shuffle.Enable()
+
 	test.WidgetRenderer(t).(*tableRender).game = t.game
 	t.Refresh()
 }
@@ -104,6 +108,13 @@ func (t *Table) Tapped(event *fyne.PointEvent) {
 	if withinCardBounds(render.deck, event.Position) {
 		t.selected = nil
 		t.game.DrawThree()
+
+		if len(t.game.Drawn.Cards) == 0 {
+			t.shuffle.Enable()
+		} else {
+			t.shuffle.Disable()
+		}
+
 		render.Refresh()
 		return
 	}

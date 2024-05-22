@@ -18,10 +18,18 @@ func show(app fyne.App) {
 	table := NewTable(game)
 
 	w := app.NewWindow("Solitaire")
-	bar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ViewRefreshIcon(), func() {
-			checkRestart(table, w)
-		}))
+	shuffle := widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
+		table.game.Hand.Shuffle()
+	})
+	shuffle.Importance = widget.LowImportance
+	table.shuffle = shuffle
+	restart := widget.NewButtonWithIcon("", theme.ContentAddIcon(), func() {
+		checkRestart(table, w)
+	})
+	restart.Importance = widget.LowImportance
+	bar := container.NewHBox(
+		restart,
+		shuffle)
 	w.SetContent(container.NewBorder(bar, nil, nil, nil, table))
 	w.Resize(fyne.NewSize(minWidth, minHeight))
 
@@ -36,6 +44,10 @@ func checkRestart(t *Table, w fyne.Window) {
 
 		t.Restart()
 	}, w)
+}
+
+func shuffleDraw(t *Table) {
+
 }
 
 func main() {
