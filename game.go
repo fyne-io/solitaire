@@ -66,6 +66,8 @@ type Game struct {
 	Stack5 *Stack
 	Stack6 *Stack
 	Stack7 *Stack
+
+	OnWin func()
 }
 
 func pushToStack(s *Stack, d *Deck, count int) {
@@ -138,6 +140,14 @@ func (g *Game) MoveCardToBuild(build *Stack, card *Card) {
 
 	g.removeCard(card)
 	build.Push(card)
+
+	if len(g.Build1.Cards) == 13 && len(g.Build2.Cards) == 13 &&
+		len(g.Build3.Cards) == 13 && len(g.Build4.Cards) == 13 {
+
+		if g.OnWin != nil {
+			g.OnWin()
+		}
+	}
 }
 
 // MoveCardToStack attempts to move the currently selected card to a table stack.

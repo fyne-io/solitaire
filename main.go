@@ -30,6 +30,9 @@ func show(app fyne.App) {
 	w.SetContent(container.NewBorder(bar, nil, nil, nil, table))
 	w.Resize(fyne.NewSize(minWidth, minHeight))
 
+	game.OnWin = func() {
+		dialog.ShowInformation("You Win!", "Congratulations", w)
+	}
 	w.Show()
 }
 

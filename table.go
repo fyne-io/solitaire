@@ -95,7 +95,9 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 }
 
 func (t *Table) Restart() {
+	oldWin := t.game.OnWin
 	t.game = NewGame()
+	t.game.OnWin = oldWin
 	t.shuffle.Enable()
 
 	test.WidgetRenderer(t).(*tableRender).game = t.game
