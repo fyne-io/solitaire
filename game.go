@@ -90,6 +90,18 @@ func (g *Game) deal() {
 	pushToStack(g.Stack7, g.Hand, 7)
 }
 
+// AutoBuild attempts to place the passed card onto one of the build stacks
+func (g *Game) AutoBuild(c *Card) {
+	for _, b := range []*Stack{g.Build1, g.Build2, g.Build3, g.Build4} {
+		if !g.ruleCanMoveToBuild(b, c) {
+			continue
+		}
+
+		g.MoveCardToBuild(b, c)
+		break
+	}
+}
+
 // ResetDraw resets the draw pile to be completely available (no cards drawn)
 func (g *Game) ResetDraw() {
 	for ; len(g.Hand.Cards) > 0; g.DrawThree() {

@@ -65,7 +65,9 @@ func (t *Table) cardTapped(cardPos *canvas.Image, pos fyne.Position, move func()
 	if t.selected == nil {
 		t.selected = card
 	} else {
-		if !cardEquals(t.selected, card) {
+		if cardEquals(t.selected, card) {
+			t.game.AutoBuild(card)
+		} else {
 			if move != nil {
 				move()
 			}
