@@ -3,6 +3,7 @@ package main
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
@@ -102,6 +103,7 @@ func (t *tableRender) Layout(size fyne.Size) {
 	updateCardPosition(t.pile1, smallPad+cardSize.Width, 0)
 	updateCardPosition(t.pile2, smallPad+cardSize.Width+overlap, 0)
 	updateCardPosition(t.pile3, smallPad+cardSize.Width+overlap*2, 0)
+	updateCardPosition(t.table.float, 0, 0)
 
 	updateCardPosition(t.build1, size.Width-smallPad*3-cardSize.Width*4, 0)
 	updateCardPosition(t.build2, size.Width-smallPad*2-cardSize.Width*3, 0)
@@ -205,8 +207,55 @@ func (t *tableRender) positionForCard(_ *Card) *canvas.Image {
 	return nil
 }
 
+func (t *tableRender) findCard(pos fyne.Position) (*Card, *canvas.Image) {
+	if t.game.Draw3 != nil {
+		if withinCardBounds(t.pile3, pos) {
+			return t.game.Draw3, t.pile3
+		}
+	} else if t.game.Draw2 != nil {
+		if withinCardBounds(t.pile2, pos) {
+			return t.game.Draw2, t.pile2
+		}
+	} else if t.game.Draw1 != nil {
+		if withinCardBounds(t.pile1, pos) {
+			return t.game.Draw1, t.pile1
+		}
+	}
+
+	// Skipping build piles as we can't drag out...
+
+	if c, p := t.findOnStack(t.stack1, t.game.Stack1, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack2, t.game.Stack2, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack3, t.game.Stack3, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack4, t.game.Stack4, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack5, t.game.Stack5, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack6, t.game.Stack6, pos); c != nil {
+		return c, p
+	} else if c, p := t.findOnStack(t.stack7, t.game.Stack7, pos); c != nil {
+		return c, p
+	}
+
+	return nil, nil
+}
+
+func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) (*Card, *canvas.Image) {
+	for i := len(stack.Cards) - 1; i >= 0; i-- {
+		if withinCardBounds(render.cards[i], pos) {
+			return stack.Cards[i], render.cards[i]
+		}
+	}
+
+	return nil, nil
+}
+
 func newTableRender(table *Table) *tableRender {
 	render := &tableRender{}
+	table.findCard = render.findCard
 	render.table = table
 	render.game = table.game
 	render.deck = newCardPos(nil)
@@ -240,6 +289,7 @@ func newTableRender(table *Table) *tableRender {
 	render.appendStack(render.stack6)
 	render.appendStack(render.stack7)
 
+	render.objects = append(render.objects, container.NewWithoutLayout(table.float))
 	render.Refresh()
 	return render
 }

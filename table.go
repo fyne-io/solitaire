@@ -18,7 +18,12 @@ type Table struct {
 	game     *Game
 	selected *Card
 
-	shuffle *widget.ToolbarAction
+	float       *canvas.Image
+	floatSource *canvas.Image
+	floatPos    fyne.Position
+	shuffle     *widget.ToolbarAction
+
+	findCard func(fyne.Position) (*Card, *canvas.Image)
 }
 
 // CreateRenderer gets the widget renderer for this table - internal use only
@@ -106,9 +111,54 @@ func (t *Table) Restart() {
 	t.Refresh()
 }
 
+// Dragged is called when the user drags on the table widget
+func (t *Table) Dragged(event *fyne.DragEvent) {
+	t.floatPos = event.Position
+	if !t.float.Hidden { // existing drag
+		t.float.Move(t.float.Position().Add(event.Dragged))
+		return
+	}
+
+	if t.selected != nil {
+		return
+	}
+
+	card, source := t.findCard(event.Position)
+	if card == nil {
+		return
+	}
+	if !card.FaceUp { // only drag visible cards
+		return
+	}
+
+	t.floatSource = source
+	t.float.Resource = source.Resource
+	t.selected = card
+	source.Resource = nil
+	source.Image = nil
+	source.Refresh()
+	t.float.Refresh()
+	t.float.Move(source.Position())
+	t.float.Show()
+}
+
+// DragEnd is called when the user stops dragging on the table widget
+func (t *Table) DragEnd() {
+	t.float.Hide()
+	if t.dropCard(t.floatPos) {
+		return
+	}
+
+	if t.floatSource != nil {
+		t.floatSource.Resource = t.float.Resource
+		t.floatSource.Refresh()
+	}
+}
+
 // Tapped is called when the user taps the table widget
 func (t *Table) Tapped(event *fyne.PointEvent) {
 	render := test.WidgetRenderer(t).(*tableRender)
+
 	if withinCardBounds(render.deck, event.Position) {
 		t.selected = nil
 		t.game.DrawThree()
@@ -123,61 +173,70 @@ func (t *Table) Tapped(event *fyne.PointEvent) {
 		return
 	}
 
+	t.dropCard(event.Position)
+}
+
+func (t *Table) dropCard(pos fyne.Position) bool {
+	render := test.WidgetRenderer(t).(*tableRender)
+
 	if t.game.Draw3 != nil {
-		if t.cardTapped(render.pile3, event.Position, nil) {
-			return
+		if t.cardTapped(render.pile3, pos, nil) {
+			return true
 		}
 	} else if t.game.Draw2 != nil {
-		if t.cardTapped(render.pile2, event.Position, nil) {
-			return
+		if t.cardTapped(render.pile2, pos, nil) {
+			return true
 		}
 	} else if t.game.Draw1 != nil {
-		if t.cardTapped(render.pile1, event.Position, nil) {
-			return
+		if t.cardTapped(render.pile1, pos, nil) {
+			return true
 		}
 	}
 
-	if t.cardTapped(render.build1, event.Position, func() {
+	if t.cardTapped(render.build1, pos, func() {
 		t.game.MoveCardToBuild(t.game.Build1, t.selected)
 	}) {
-		return
-	} else if t.cardTapped(render.build2, event.Position, func() {
+		return true
+	} else if t.cardTapped(render.build2, pos, func() {
 		t.game.MoveCardToBuild(t.game.Build2, t.selected)
 	}) {
-		return
-	} else if t.cardTapped(render.build3, event.Position, func() {
+		return true
+	} else if t.cardTapped(render.build3, pos, func() {
 		t.game.MoveCardToBuild(t.game.Build3, t.selected)
 	}) {
-		return
-	} else if t.cardTapped(render.build4, event.Position, func() {
+		return true
+	} else if t.cardTapped(render.build4, pos, func() {
 		t.game.MoveCardToBuild(t.game.Build4, t.selected)
 	}) {
-		return
+		return true
 	}
 
-	if t.checkStackTapped(render.stack1, t.game.Stack1, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack2, t.game.Stack2, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack3, t.game.Stack3, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack4, t.game.Stack4, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack5, t.game.Stack5, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack6, t.game.Stack6, event.Position) {
-		return
-	} else if t.checkStackTapped(render.stack7, t.game.Stack7, event.Position) {
-		return
+	if t.checkStackTapped(render.stack1, t.game.Stack1, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack2, t.game.Stack2, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack3, t.game.Stack3, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack4, t.game.Stack4, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack5, t.game.Stack5, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack6, t.game.Stack6, pos) {
+		return true
+	} else if t.checkStackTapped(render.stack7, t.game.Stack7, pos) {
+		return true
 	}
 
 	t.selected = nil // clicked elsewhere
 	t.Refresh()
+	return false
 }
 
 // NewTable creates a new table widget for the specified game
 func NewTable(g *Game) *Table {
 	table := &Table{game: g}
 	table.ExtendBaseWidget(table)
+
+	table.float = &canvas.Image{}
 	return table
 }
