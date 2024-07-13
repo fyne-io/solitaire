@@ -238,5 +238,6 @@ func NewTable(g *Game) *Table {
 	table.ExtendBaseWidget(table)
 
 	table.float = &canvas.Image{}
+	table.float.Hide()
 	return table
 }
