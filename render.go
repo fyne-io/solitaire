@@ -253,9 +253,24 @@ func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Po
 	return nil, nil
 }
 
+func (t *tableRender) stackPos(i int) fyne.Position {
+	size := t.table.Size()
+	switch i {
+	case 3:
+		return fyne.NewPos(size.Width-cardSize.Width, 0)
+	case 2:
+		return fyne.NewPos(size.Width-smallPad-cardSize.Width*2, 0)
+	case 1:
+		return fyne.NewPos(size.Width-smallPad*2-cardSize.Width*3, 0)
+	default:
+		return fyne.NewPos(size.Width-smallPad*3-cardSize.Width*4, 0)
+	}
+}
+
 func newTableRender(table *Table) *tableRender {
 	render := &tableRender{}
 	table.findCard = render.findCard
+	table.stackPos = render.stackPos
 	render.table = table
 	render.game = table.game
 	render.deck = newCardPos(nil)

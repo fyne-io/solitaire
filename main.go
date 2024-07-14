@@ -31,7 +31,10 @@ func show(app fyne.App) {
 	w.Resize(fyne.NewSize(minWidth, minHeight))
 
 	game.OnWin = func() {
-		dialog.ShowInformation("You Win!", "Congratulations", w)
+		table.finishAnimation()
+		d := dialog.NewInformation("You Win!", "Congratulations", w)
+		d.SetOnClosed(table.Restart)
+		d.Show()
 	}
 	w.Show()
 }

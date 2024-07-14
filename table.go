@@ -2,10 +2,14 @@ package main
 
 import (
 	"math"
+	"sync"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/test"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/fyne-io/solitaire/faces"
@@ -24,6 +28,7 @@ type Table struct {
 	shuffle     *widget.ToolbarAction
 
 	findCard func(fyne.Position) (*Card, *canvas.Image)
+	stackPos func(int) fyne.Position
 }
 
 // CreateRenderer gets the widget renderer for this table - internal use only
@@ -230,6 +235,62 @@ func (t *Table) dropCard(pos fyne.Position) bool {
 	t.selected = nil // clicked elsewhere
 	t.Refresh()
 	return false
+}
+
+func (t *Table) finishAnimation() {
+	anim := container.NewWithoutLayout()
+	anim.Resize(t.Size())
+	fyne.CurrentApp().Driver().CanvasForObject(t).Overlays().Add(anim)
+	wg := &sync.WaitGroup{}
+	for i := ValueKing; i > 0; i-- {
+		for j, p := range []*Stack{t.game.Build1, t.game.Build2, t.game.Build3, t.game.Build4} {
+			card := p.Pop()
+			pos := t.stackPos(j)
+
+			wg.Add(1)
+			off := fyne.Delta{DX: -2, DY: 1}
+			switch j {
+			case 0:
+				off.DX = 2
+			case 1:
+				off.DX = 2
+				off.DY = -1
+			case 2:
+				off.DY = -1
+			}
+			image := t.startCardAnimation(card, pos, off, wg)
+
+			anim.Objects = append([]fyne.CanvasObject{image}, anim.Objects...)
+			t.Refresh()
+			time.Sleep(time.Second / 6)
+		}
+	}
+
+	wg.Wait()
+	anim.Objects = []fyne.CanvasObject{}
+	fyne.CurrentApp().Driver().CanvasForObject(t).Overlays().Remove(anim)
+}
+
+func (t *Table) startCardAnimation(card *Card, pos fyne.Position, off fyne.Delta, wg *sync.WaitGroup) fyne.CanvasObject {
+	bounds := t.Size()
+	pad := theme.Padding()
+	i := canvas.NewImageFromResource(faces.ForCard(card.Value, int(card.Suit)))
+	i.Resize(cardSize)
+	i.Move(pos)
+
+	go func() {
+		for pos.X > -cardSize.Width-pad && pos.Y > -cardSize.Height-pad && pos.X < bounds.Width && pos.Y < bounds.Height {
+			pos = pos.Add(off)
+			i.Move(pos)
+
+			time.Sleep(time.Millisecond * 12)
+		}
+
+		i.Hide()
+		wg.Done()
+	}()
+
+	return i
 }
 
 // NewTable creates a new table widget for the specified game
