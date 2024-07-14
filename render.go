@@ -141,7 +141,6 @@ func (t *tableRender) refreshCard(img *canvas.Image, card *Card) {
 }
 
 func (t *tableRender) refreshCardOrBlank(img *canvas.Image, card *Card) {
-	img.Resource = faces.ForSpace()
 	img.Translucency = 0
 	if card == nil {
 		img.Resource = faces.ForSpace()
@@ -159,6 +158,7 @@ func (t *tableRender) refreshCardOrBlank(img *canvas.Image, card *Card) {
 	} else {
 		img.Translucency = 0
 	}
+	img.Refresh()
 }
 
 func (t *tableRender) Refresh() {
@@ -337,6 +337,8 @@ func (s *stackRender) Refresh(stack *Stack) {
 	}
 
 	for i = i + 1; i < len(s.cards); i++ {
+		s.cards[i].Image = nil
+		s.cards[i].Resource = nil
 		s.cards[i].Hide()
 	}
 }
