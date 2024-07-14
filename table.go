@@ -27,7 +27,7 @@ type Table struct {
 	floatPos    fyne.Position
 	shuffle     *widget.ToolbarAction
 
-	findCard func(fyne.Position) (*Card, *canvas.Image)
+	findCard func(fyne.Position) (*Card, *canvas.Image, bool)
 	stackPos func(int) fyne.Position
 }
 
@@ -128,7 +128,7 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 		return
 	}
 
-	card, source := t.findCard(event.Position)
+	card, source, last := t.findCard(event.Position)
 	if card == nil {
 		return
 	}
@@ -140,6 +140,9 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 	t.float.Resource = source.Resource
 	t.selected = card
 	source.Resource = nil
+	if last {
+		source.Resource = faces.ForSpace()
+	}
 	source.Image = nil
 	source.Refresh()
 	t.float.Refresh()
