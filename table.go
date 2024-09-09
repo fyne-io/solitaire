@@ -302,11 +302,12 @@ func NewTable(g *Game) *Table {
 	table := &Table{game: g}
 	table.ExtendBaseWidget(table)
 
-	table.float = make([]*canvas.Image,1)
-	table.float[0] = &canvas.Image{}
-	table.float[0].Hide()
-
-	table.floatSource = make([]*canvas.Image,1)
+	table.float = make([]*canvas.Image,ValueKing)
+	for i:=0;i<ValueKing;i++ {
+		table.float[i] = &canvas.Image{}
+		table.float[i].Hide()
+	}
+	table.floatSource = make([]*canvas.Image,ValueKing)
 
 	return table
 }
