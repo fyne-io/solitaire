@@ -22,9 +22,10 @@ type Table struct {
 	game     *Game
 	selected *Card
 
-	float       *canvas.Image
-	floatSource *canvas.Image
+	float       []*canvas.Image
+	floatSource []*canvas.Image
 	floatPos    fyne.Position
+
 	shuffle     *widget.ToolbarAction
 
 	findCard func(fyne.Position) (*Card, *canvas.Image, bool)
@@ -119,8 +120,8 @@ func (t *Table) Restart() {
 // Dragged is called when the user drags on the table widget
 func (t *Table) Dragged(event *fyne.DragEvent) {
 	t.floatPos = event.Position
-	if !t.float.Hidden { // existing drag
-		t.float.Move(t.float.Position().Add(event.Dragged))
+	if !t.float[0].Hidden { // existing drag
+		t.float[0].Move(t.float[0].Position().Add(event.Dragged))
 		return
 	}
 
@@ -136,8 +137,8 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 		return
 	}
 
-	t.floatSource = source
-	t.float.Resource = source.Resource
+	t.floatSource[0] = source
+	t.float[0].Resource = source.Resource
 	t.selected = card
 	source.Resource = nil
 	if last {
@@ -145,21 +146,21 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 	}
 	source.Image = nil
 	source.Refresh()
-	t.float.Refresh()
-	t.float.Move(source.Position())
-	t.float.Show()
+	t.float[0].Refresh()
+	t.float[0].Move(source.Position())
+	t.float[0].Show()
 }
 
 // DragEnd is called when the user stops dragging on the table widget
 func (t *Table) DragEnd() {
-	t.float.Hide()
+	t.float[0].Hide()
 	if t.dropCard(t.floatPos) {
 		return
 	}
 
-	if t.floatSource != nil {
-		t.floatSource.Resource = t.float.Resource
-		t.floatSource.Refresh()
+	if t.floatSource[0] != nil {
+		t.floatSource[0].Resource = t.float[0].Resource
+		t.floatSource[0].Refresh()
 	}
 }
 
@@ -301,7 +302,11 @@ func NewTable(g *Game) *Table {
 	table := &Table{game: g}
 	table.ExtendBaseWidget(table)
 
-	table.float = &canvas.Image{}
-	table.float.Hide()
+	table.float = make([]*canvas.Image,1)
+	table.float[0] = &canvas.Image{}
+	table.float[0].Hide()
+
+	table.floatSource = make([]*canvas.Image,1)
+
 	return table
 }

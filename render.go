@@ -103,7 +103,7 @@ func (t *tableRender) Layout(size fyne.Size) {
 	updateCardPosition(t.pile1, smallPad+cardSize.Width, 0)
 	updateCardPosition(t.pile2, smallPad+cardSize.Width+overlap, 0)
 	updateCardPosition(t.pile3, smallPad+cardSize.Width+overlap*2, 0)
-	updateCardPosition(t.table.float, 0, 0)
+	updateCardPosition(t.table.float[0], 0, 0)
 
 	updateCardPosition(t.build1, size.Width-smallPad*3-cardSize.Width*4, 0)
 	updateCardPosition(t.build2, size.Width-smallPad*2-cardSize.Width*3, 0)
@@ -304,7 +304,7 @@ func newTableRender(table *Table) *tableRender {
 	render.appendStack(render.stack6)
 	render.appendStack(render.stack7)
 
-	render.objects = append(render.objects, container.NewWithoutLayout(table.float))
+	render.objects = append(render.objects, container.NewWithoutLayout(table.float[0]))
 	render.Refresh()
 	return render
 }
