@@ -225,28 +225,28 @@ func (t *tableRender) findCard(pos fyne.Position) ([]*Card, []*canvas.Image, boo
 	// Skipping build piles as we can't drag out...
 
 	if c, p := t.findOnStack(t.stack1, t.game.Stack1, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack1.Cards) == 1
+		return c, p, len(t.game.Stack1.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack2, t.game.Stack2, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack2.Cards) == 1
+		return c, p, len(t.game.Stack2.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack3, t.game.Stack3, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack3.Cards) == 1
+		return c, p, len(t.game.Stack3.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack4, t.game.Stack4, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack4.Cards) == 1
+		return c, p, len(t.game.Stack4.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack5, t.game.Stack5, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack5.Cards) == 1
+		return c, p, len(t.game.Stack5.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack6, t.game.Stack6, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack6.Cards) == 1
+		return c, p, len(t.game.Stack6.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack7, t.game.Stack7, pos); c != nil {
-		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack7.Cards) == 1
+		return c, p, len(t.game.Stack7.Cards) == 1
 	}
 
 	return nil, nil, false
 }
 
-func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) (*Card, *canvas.Image) {
+func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) ([]*Card, []*canvas.Image) {
 	for i := len(stack.Cards) - 1; i >= 0; i-- {
 		if withinCardBounds(render.cards[i], pos) {
-			return stack.Cards[i], render.cards[i]
+			return []*Card{stack.Cards[i]}, []*canvas.Image{render.cards[i]}
 		}
 	}
 
