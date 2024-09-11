@@ -121,7 +121,12 @@ func (t *Table) Restart() {
 func (t *Table) Dragged(event *fyne.DragEvent) {
 	t.floatPos = event.Position
 	if !t.float[0].Hidden { // existing drag
-		t.float[0].Move(t.float[0].Position().Add(event.Dragged))
+
+		for i:=0;i<len(t.float);i++ {
+			if (t.float[i] != nil && !t.float[i].Hidden) {
+				t.float[i].Move(t.float[i].Position().Add(event.Dragged))
+			}
+		}
 		return
 	}
 
@@ -137,18 +142,21 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 		return
 	}
 
-	t.floatSource[0] = source[0]
-	t.float[0].Resource = source[0].Resource
 	t.selected = card[0]
-	source[0].Resource = nil
 	if last {
 		source[0].Resource = faces.ForSpace()
 	}
-	source[0].Image = nil
-	source[0].Refresh()
-	t.float[0].Refresh()
-	t.float[0].Move(source[0].Position())
-	t.float[0].Show()
+
+	for i:=0;i<len(source);i++ {
+		t.floatSource[i] = source[i]
+		t.float[i].Resource = source[i].Resource
+		source[i].Resource = nil
+		source[i].Image = nil
+		source[i].Refresh()
+		t.float[i].Refresh()
+		updateCardPosition(t.float[i], source[i].Position().X, source[i].Position().Y)
+		t.float[i].Show()
+	}
 }
 
 // DragEnd is called when the user stops dragging on the table widget

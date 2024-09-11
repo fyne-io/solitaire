@@ -304,7 +304,9 @@ func newTableRender(table *Table) *tableRender {
 	render.appendStack(render.stack6)
 	render.appendStack(render.stack7)
 
-	render.objects = append(render.objects, container.NewWithoutLayout(table.float[0]))
+	for i:=0; i<len(table.float); i++ {
+		render.objects = append(render.objects, container.NewWithoutLayout(table.float[i]))
+	}
 	render.Refresh()
 	return render
 }
