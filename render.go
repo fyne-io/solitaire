@@ -207,37 +207,37 @@ func (t *tableRender) positionForCard(_ *Card) *canvas.Image {
 	return nil
 }
 
-func (t *tableRender) findCard(pos fyne.Position) (*Card, *canvas.Image, bool) {
+func (t *tableRender) findCard(pos fyne.Position) ([]*Card, []*canvas.Image, bool) {
 	if t.game.Draw3 != nil {
 		if withinCardBounds(t.pile3, pos) {
-			return t.game.Draw3, t.pile3, false
+			return []*Card{t.game.Draw3}, []*canvas.Image{t.pile3}, false
 		}
 	} else if t.game.Draw2 != nil {
 		if withinCardBounds(t.pile2, pos) {
-			return t.game.Draw2, t.pile2, false
+			return []*Card{t.game.Draw2}, []*canvas.Image{t.pile2}, false
 		}
 	} else if t.game.Draw1 != nil {
 		if withinCardBounds(t.pile1, pos) {
-			return t.game.Draw1, t.pile1, true
+			return []*Card{t.game.Draw1}, []*canvas.Image{t.pile1}, true
 		}
 	}
 
 	// Skipping build piles as we can't drag out...
 
 	if c, p := t.findOnStack(t.stack1, t.game.Stack1, pos); c != nil {
-		return c, p, len(t.game.Stack1.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack1.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack2, t.game.Stack2, pos); c != nil {
-		return c, p, len(t.game.Stack2.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack2.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack3, t.game.Stack3, pos); c != nil {
-		return c, p, len(t.game.Stack3.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack3.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack4, t.game.Stack4, pos); c != nil {
-		return c, p, len(t.game.Stack4.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack4.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack5, t.game.Stack5, pos); c != nil {
-		return c, p, len(t.game.Stack5.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack5.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack6, t.game.Stack6, pos); c != nil {
-		return c, p, len(t.game.Stack6.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack6.Cards) == 1
 	} else if c, p := t.findOnStack(t.stack7, t.game.Stack7, pos); c != nil {
-		return c, p, len(t.game.Stack7.Cards) == 1
+		return []*Card{c}, []*canvas.Image{p}, len(t.game.Stack7.Cards) == 1
 	}
 
 	return nil, nil, false
