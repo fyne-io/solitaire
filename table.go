@@ -157,10 +157,12 @@ func (t *Table) DragEnd() {
 	if t.dropCard(t.floatPos) {
 		return
 	}
-
-	if t.floatSource[0] != nil {
-		t.floatSource[0].Resource = t.float[0].Resource
-		t.floatSource[0].Refresh()
+	
+	for i:=0;i<ValueKing;i++ {
+		if t.floatSource[i] != nil {
+			t.floatSource[i].Resource = t.float[i].Resource
+			t.floatSource[i].Refresh()
+		}
 	}
 }
 
