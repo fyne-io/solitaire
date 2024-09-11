@@ -153,7 +153,10 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 
 // DragEnd is called when the user stops dragging on the table widget
 func (t *Table) DragEnd() {
-	t.float[0].Hide()
+	for i:=0;i<ValueKing;i++ {
+		t.float[i].Hide()
+	}
+	
 	if t.dropCard(t.floatPos) {
 		return
 	}
