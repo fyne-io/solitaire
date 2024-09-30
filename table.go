@@ -143,14 +143,15 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 	}
 
 	t.selected = card[0]
-	if last {
-		source[0].Resource = faces.ForSpace()
-	}
 
 	for i:=0;i<len(source);i++ {
 		t.floatSource[i] = source[i]
 		t.float[i].Resource = source[i].Resource
-		source[i].Resource = nil
+		if last && i==0 {
+			source[i].Resource = faces.ForSpace()
+		} else {
+			source[i].Resource = nil
+		}
 		source[i].Image = nil
 		source[i].Refresh()
 		t.float[i].Refresh()
