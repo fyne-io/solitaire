@@ -103,7 +103,7 @@ func (t *tableRender) Layout(size fyne.Size) {
 	updateCardPosition(t.pile1, smallPad+cardSize.Width, 0)
 	updateCardPosition(t.pile2, smallPad+cardSize.Width+overlap, 0)
 	updateCardPosition(t.pile3, smallPad+cardSize.Width+overlap*2, 0)
-	updateCardPosition(t.table.float, 0, 0)
+	updateCardPosition(t.table.float[0], 0, 0)
 
 	updateCardPosition(t.build1, size.Width-smallPad*3-cardSize.Width*4, 0)
 	updateCardPosition(t.build2, size.Width-smallPad*2-cardSize.Width*3, 0)
@@ -207,18 +207,18 @@ func (t *tableRender) positionForCard(_ *Card) *canvas.Image {
 	return nil
 }
 
-func (t *tableRender) findCard(pos fyne.Position) (*Card, *canvas.Image, bool) {
+func (t *tableRender) findCard(pos fyne.Position) ([]*Card, []*canvas.Image, bool) {
 	if t.game.Draw3 != nil {
 		if withinCardBounds(t.pile3, pos) {
-			return t.game.Draw3, t.pile3, false
+			return []*Card{t.game.Draw3}, []*canvas.Image{t.pile3}, false
 		}
 	} else if t.game.Draw2 != nil {
 		if withinCardBounds(t.pile2, pos) {
-			return t.game.Draw2, t.pile2, false
+			return []*Card{t.game.Draw2}, []*canvas.Image{t.pile2}, false
 		}
 	} else if t.game.Draw1 != nil {
 		if withinCardBounds(t.pile1, pos) {
-			return t.game.Draw1, t.pile1, true
+			return []*Card{t.game.Draw1}, []*canvas.Image{t.pile1}, true
 		}
 	}
 
@@ -243,10 +243,10 @@ func (t *tableRender) findCard(pos fyne.Position) (*Card, *canvas.Image, bool) {
 	return nil, nil, false
 }
 
-func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) (*Card, *canvas.Image) {
+func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) ([]*Card, []*canvas.Image) {
 	for i := len(stack.Cards) - 1; i >= 0; i-- {
 		if withinCardBounds(render.cards[i], pos) {
-			return stack.Cards[i], render.cards[i]
+			return stack.Cards[i:len(stack.Cards)],render.cards[i:len(stack.Cards)]
 		}
 	}
 
@@ -304,7 +304,9 @@ func newTableRender(table *Table) *tableRender {
 	render.appendStack(render.stack6)
 	render.appendStack(render.stack7)
 
-	render.objects = append(render.objects, container.NewWithoutLayout(table.float))
+	for i:=0; i<len(table.float); i++ {
+		render.objects = append(render.objects, container.NewWithoutLayout(table.float[i]))
+	}
 	render.Refresh()
 	return render
 }

@@ -22,12 +22,13 @@ type Table struct {
 	game     *Game
 	selected *Card
 
-	float       *canvas.Image
-	floatSource *canvas.Image
+	float       []*canvas.Image
+	floatSource []*canvas.Image
 	floatPos    fyne.Position
+
 	shuffle     *widget.ToolbarAction
 
-	findCard func(fyne.Position) (*Card, *canvas.Image, bool)
+	findCard func(fyne.Position) ([]*Card, []*canvas.Image, bool)
 	stackPos func(int) fyne.Position
 }
 
@@ -119,8 +120,13 @@ func (t *Table) Restart() {
 // Dragged is called when the user drags on the table widget
 func (t *Table) Dragged(event *fyne.DragEvent) {
 	t.floatPos = event.Position
-	if !t.float.Hidden { // existing drag
-		t.float.Move(t.float.Position().Add(event.Dragged))
+	if !t.float[0].Hidden { // existing drag
+
+		for i:=0;i<len(t.float);i++ {
+			if (t.float[i] != nil && !t.float[i].Hidden) {
+				t.float[i].Move(t.float[i].Position().Add(event.Dragged))
+			}
+		}
 		return
 	}
 
@@ -132,34 +138,43 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 	if card == nil {
 		return
 	}
-	if !card.FaceUp { // only drag visible cards
+	if !card[0].FaceUp { // only drag visible cards
 		return
 	}
 
-	t.floatSource = source
-	t.float.Resource = source.Resource
-	t.selected = card
-	source.Resource = nil
-	if last {
-		source.Resource = faces.ForSpace()
+	t.selected = card[0]
+
+	for i:=0;i<len(source);i++ {
+		t.floatSource[i] = source[i]
+		t.float[i].Resource = source[i].Resource
+		if last && i==0 {
+			source[i].Resource = faces.ForSpace()
+		} else {
+			source[i].Resource = nil
+		}
+		source[i].Image = nil
+		source[i].Refresh()
+		t.float[i].Refresh()
+		updateCardPosition(t.float[i], source[i].Position().X, source[i].Position().Y)
+		t.float[i].Show()
 	}
-	source.Image = nil
-	source.Refresh()
-	t.float.Refresh()
-	t.float.Move(source.Position())
-	t.float.Show()
 }
 
 // DragEnd is called when the user stops dragging on the table widget
 func (t *Table) DragEnd() {
-	t.float.Hide()
+	for i:=0;i<ValueKing;i++ {
+		t.float[i].Hide()
+	}
+	
 	if t.dropCard(t.floatPos) {
 		return
 	}
-
-	if t.floatSource != nil {
-		t.floatSource.Resource = t.float.Resource
-		t.floatSource.Refresh()
+	
+	for i:=0;i<ValueKing;i++ {
+		if t.floatSource[i] != nil {
+			t.floatSource[i].Resource = t.float[i].Resource
+			t.floatSource[i].Refresh()
+		}
 	}
 }
 
@@ -301,7 +316,12 @@ func NewTable(g *Game) *Table {
 	table := &Table{game: g}
 	table.ExtendBaseWidget(table)
 
-	table.float = &canvas.Image{}
-	table.float.Hide()
+	table.float = make([]*canvas.Image,ValueKing)
+	for i:=0;i<ValueKing;i++ {
+		table.float[i] = &canvas.Image{}
+		table.float[i].Hide()
+	}
+	table.floatSource = make([]*canvas.Image,ValueKing)
+
 	return table
 }
