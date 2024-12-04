@@ -26,7 +26,7 @@ type Table struct {
 	floatSource []*canvas.Image
 	floatPos    fyne.Position
 
-	shuffle     *widget.ToolbarAction
+	shuffle *widget.ToolbarAction
 
 	findCard func(fyne.Position) ([]*Card, []*canvas.Image, bool)
 	stackPos func(int) fyne.Position
@@ -122,8 +122,8 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 	t.floatPos = event.Position
 	if !t.float[0].Hidden { // existing drag
 
-		for i:=0;i<len(t.float);i++ {
-			if (t.float[i] != nil && !t.float[i].Hidden) {
+		for i := 0; i < len(t.float); i++ {
+			if t.float[i] != nil && !t.float[i].Hidden {
 				t.float[i].Move(t.float[i].Position().Add(event.Dragged))
 			}
 		}
@@ -144,10 +144,10 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 
 	t.selected = card[0]
 
-	for i:=0;i<len(source);i++ {
+	for i := 0; i < len(source); i++ {
 		t.floatSource[i] = source[i]
 		t.float[i].Resource = source[i].Resource
-		if last && i==0 {
+		if last && i == 0 {
 			source[i].Resource = faces.ForSpace()
 		} else {
 			source[i].Resource = nil
@@ -164,15 +164,15 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 
 // DragEnd is called when the user stops dragging on the table widget
 func (t *Table) DragEnd() {
-	for i:=0;i<ValueKing;i++ {
+	for i := 0; i < ValueKing; i++ {
 		t.float[i].Hide()
 	}
-	
+
 	if t.dropCard(t.floatPos) {
 		return
 	}
-	
-	for i:=0;i<ValueKing;i++ {
+
+	for i := 0; i < ValueKing; i++ {
 		if t.floatSource[i] != nil {
 			t.floatSource[i].Resource = t.float[i].Resource
 			t.floatSource[i].Refresh()
@@ -318,12 +318,12 @@ func NewTable(g *Game) *Table {
 	table := &Table{game: g}
 	table.ExtendBaseWidget(table)
 
-	table.float = make([]*canvas.Image,ValueKing)
-	for i:=0;i<ValueKing;i++ {
+	table.float = make([]*canvas.Image, ValueKing)
+	for i := 0; i < ValueKing; i++ {
 		table.float[i] = &canvas.Image{}
 		table.float[i].Hide()
 	}
-	table.floatSource = make([]*canvas.Image,ValueKing)
+	table.floatSource = make([]*canvas.Image, ValueKing)
 
 	return table
 }

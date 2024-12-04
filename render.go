@@ -246,7 +246,7 @@ func (t *tableRender) findCard(pos fyne.Position) ([]*Card, []*canvas.Image, boo
 func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Position) ([]*Card, []*canvas.Image) {
 	for i := len(stack.Cards) - 1; i >= 0; i-- {
 		if withinCardBounds(render.cards[i], pos) {
-			return stack.Cards[i:len(stack.Cards)],render.cards[i:len(stack.Cards)]
+			return stack.Cards[i:len(stack.Cards)], render.cards[i:len(stack.Cards)]
 		}
 	}
 
