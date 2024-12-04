@@ -154,9 +154,11 @@ func (t *Table) Dragged(event *fyne.DragEvent) {
 		}
 		source[i].Image = nil
 		source[i].Refresh()
+
+		t.float[i].Hidden = false
+		t.float[i].Image = nil
 		t.float[i].Refresh()
 		updateCardPosition(t.float[i], source[i].Position().X, source[i].Position().Y)
-		t.float[i].Show()
 	}
 }
 
