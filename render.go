@@ -142,6 +142,7 @@ func (t *tableRender) refreshCard(img *canvas.Image, card *Card) {
 
 func (t *tableRender) refreshCardOrBlank(img *canvas.Image, card *Card) {
 	img.Translucency = 0
+	img.Image = nil
 	if card == nil {
 		img.Resource = faces.ForSpace()
 		return
