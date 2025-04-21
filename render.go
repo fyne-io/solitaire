@@ -255,16 +255,17 @@ func (t *tableRender) findOnStack(render *stackRender, stack *Stack, pos fyne.Po
 }
 
 func (t *tableRender) stackPos(i int) fyne.Position {
+	top := t.table.Position().Y
 	size := t.table.Size()
 	switch i {
 	case 3:
-		return fyne.NewPos(size.Width-cardSize.Width, 0)
+		return fyne.NewPos(size.Width-cardSize.Width, top)
 	case 2:
-		return fyne.NewPos(size.Width-smallPad-cardSize.Width*2, 0)
+		return fyne.NewPos(size.Width-smallPad-cardSize.Width*2, top)
 	case 1:
-		return fyne.NewPos(size.Width-smallPad*2-cardSize.Width*3, 0)
+		return fyne.NewPos(size.Width-smallPad*2-cardSize.Width*3, top)
 	default:
-		return fyne.NewPos(size.Width-smallPad*3-cardSize.Width*4, 0)
+		return fyne.NewPos(size.Width-smallPad*3-cardSize.Width*4, top)
 	}
 }
 
@@ -334,6 +335,7 @@ func (s *stackRender) Refresh(stack *Stack) {
 	if len(stack.Cards) == 0 {
 		s.cards[0].Resource = faces.ForSpace()
 		s.cards[0].Translucency = 0
+		s.cards[0].Refresh()
 		i = 0
 	} else {
 		for i, card = range stack.Cards {
