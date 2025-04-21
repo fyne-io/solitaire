@@ -2,3 +2,6 @@
   Name = "Solitaire"
   ID = "io.fyne.solitaire"
   Build = 7
+
+[Migrations]
+  fyneDo = true
