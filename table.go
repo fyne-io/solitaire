@@ -262,33 +262,47 @@ func (t *Table) finishAnimation() {
 	anim.Resize(t.Size())
 	fyne.CurrentApp().Driver().CanvasForObject(t).Overlays().Add(anim)
 	wg := &sync.WaitGroup{}
-	for i := ValueKing; i > 0; i-- {
-		for j, p := range []*Stack{t.game.Build1, t.game.Build2, t.game.Build3, t.game.Build4} {
-			card := p.Pop()
-			pos := t.stackPos(j)
 
-			wg.Add(1)
-			off := fyne.Delta{DX: -2, DY: 1}
-			switch j {
-			case 0:
-				off.DX = 2
-			case 1:
-				off.DX = 2
-				off.DY = -1
-			case 2:
-				off.DY = -1
-			}
-			image := t.startCardAnimation(card, pos, off, wg)
-
-			anim.Objects = append([]fyne.CanvasObject{image}, anim.Objects...)
-			t.Refresh()
-			time.Sleep(time.Second / 6)
+	for _, p := range []*Stack{t.game.Build1, t.game.Build2, t.game.Build3, t.game.Build4} {
+		c := len(p.Cards)
+		if c == 0 {
+			continue
 		}
+		wg.Add(c)
 	}
+	go func() {
+		for i := ValueKing; i > 0; i-- {
+			for j, p := range []*Stack{t.game.Build1, t.game.Build2, t.game.Build3, t.game.Build4} {
+				card := p.Pop()
+				if card == nil {
+					break
+				}
+				pos := t.stackPos(j)
 
-	wg.Wait()
-	anim.Objects = []fyne.CanvasObject{}
-	fyne.CurrentApp().Driver().CanvasForObject(t).Overlays().Remove(anim)
+				off := fyne.Delta{DX: -2, DY: 1}
+				switch j {
+				case 0:
+					off.DX = 2
+				case 1:
+					off.DX = 2
+					off.DY = -1
+				case 2:
+					off.DY = -1
+				}
+				fyne.Do(func() {
+					image := t.startCardAnimation(card, pos, off, wg)
+					anim.Objects = append([]fyne.CanvasObject{image}, anim.Objects...)
+
+					t.Refresh()
+				})
+				time.Sleep(time.Second / 6)
+			}
+		}
+
+		wg.Wait()
+		anim.Objects = []fyne.CanvasObject{}
+		fyne.CurrentApp().Driver().CanvasForObject(t).Overlays().Remove(anim)
+	}()
 }
 
 func (t *Table) startCardAnimation(card *Card, pos fyne.Position, off fyne.Delta, wg *sync.WaitGroup) fyne.CanvasObject {
@@ -301,13 +315,17 @@ func (t *Table) startCardAnimation(card *Card, pos fyne.Position, off fyne.Delta
 	go func() {
 		for pos.X > -cardSize.Width-pad && pos.Y > -cardSize.Height-pad && pos.X < bounds.Width && pos.Y < bounds.Height {
 			pos = pos.Add(off)
-			i.Move(pos)
+			fyne.Do(func() {
+				i.Move(pos)
+			})
 
 			time.Sleep(time.Millisecond * 12)
 		}
 
-		i.Hide()
-		wg.Done()
+		fyne.Do(func() {
+			i.Hide()
+			wg.Done()
+		})
 	}()
 
 	return i
