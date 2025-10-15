@@ -49,10 +49,6 @@ func checkRestart(t *Table, w fyne.Window) {
 	}, w)
 }
 
-func shuffleDraw(t *Table) {
-
-}
-
 func main() {
 	a := app.New()
 	a.SetIcon(resourceIconPng)

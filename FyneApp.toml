@@ -1,7 +1,8 @@
 [Details]
-  Name = "Solitaire"
-  ID = "io.fyne.solitaire"
-  Build = 7
+Name = "Solitaire"
+ID = "io.fyne.solitaire"
+Version = "1.1"
+Build = 16
 
 [Migrations]
-  fyneDo = true
+fyneDo = true
