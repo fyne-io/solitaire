@@ -10,9 +10,11 @@ import (
 	"github.com/fyne-io/solitaire/faces"
 )
 
-const minCardWidth = float32(95)
-const minPadding = float32(4)
-const cardRatio = 142.0 / minCardWidth
+const (
+	minCardWidth = float32(95)
+	minPadding   = float32(4)
+	cardRatio    = 142.0 / minCardWidth
+)
 
 var (
 	cardSize = fyne.Size{Width: minCardWidth, Height: minCardWidth * cardRatio}
@@ -295,8 +297,10 @@ func newTableRender(table *Table) *tableRender {
 	render.stack6 = newStackRender(render)
 	render.stack7 = newStackRender(render)
 
-	render.objects = []fyne.CanvasObject{render.deck, render.sep, render.pile1, render.pile2, render.pile3,
-		render.build1, render.build2, render.build3, render.build4}
+	render.objects = []fyne.CanvasObject{
+		render.deck, render.sep, render.pile1, render.pile2, render.pile3,
+		render.build1, render.build2, render.build3, render.build4,
+	}
 
 	render.appendStack(render.stack1)
 	render.appendStack(render.stack2)

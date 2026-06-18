@@ -26,7 +26,8 @@ func show(app fyne.App) {
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
 			checkRestart(table, w)
 		}),
-		shuffle)
+		shuffle,
+	)
 	w.SetContent(container.NewBorder(bar, nil, nil, nil, table))
 	w.Resize(fyne.NewSize(minWidth, minHeight))
 

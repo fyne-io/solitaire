@@ -236,7 +236,6 @@ func (g *Game) removeCard(card *Card) {
 		g.Build3.Pop()
 	} else if cardEquals(card, g.Build4.Top()) {
 		g.Build4.Pop()
-
 	} else if cardEquals(card, g.Stack1.Top()) {
 		g.Stack1.Pop()
 	} else if cardEquals(card, g.Stack2.Top()) {
