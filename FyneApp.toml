@@ -2,7 +2,10 @@
 Name = "Solitaire"
 ID = "io.fyne.solitaire"
 Version = "1.1"
-Build = 16
+Build = 17
 
 [Migrations]
 fyneDo = true
+
+[LinuxAndBSD]
+Categories = ["Game"]
