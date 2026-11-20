@@ -150,7 +150,9 @@ func (g *Game) MoveCardToBuild(build *Stack, card *Card) {
 		return
 	}
 
-	g.removeCard(card)
+	if !g.removeCard(card) {
+		return
+	}
 	build.Push(card)
 
 	if len(g.Build1.Cards) == 13 && len(g.Build2.Cards) == 13 &&
@@ -216,7 +218,7 @@ func (g *Game) stackForCard(card *Card) *Stack {
 	return nil
 }
 
-func (g *Game) removeCard(card *Card) {
+func (g *Game) removeCard(card *Card) bool {
 	if cardEquals(card, g.Draw3) {
 		g.Drawn.Remove(card)
 		g.Draw3 = nil
@@ -250,7 +252,11 @@ func (g *Game) removeCard(card *Card) {
 		g.Stack6.Pop()
 	} else if cardEquals(card, g.Stack7.Top()) {
 		g.Stack7.Pop()
+	} else {
+		return false
 	}
+
+	return true
 }
 
 // NewGame starts a new solitaire game and draws to the standard configuration.
