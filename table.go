@@ -111,6 +111,7 @@ func (t *Table) Restart() {
 	oldWin := t.game.OnWin
 	t.game = NewGame()
 	t.game.OnWin = oldWin
+	t.selected = nil
 	t.shuffle.Enable()
 
 	test.WidgetRenderer(t).(*tableRender).game = t.game
